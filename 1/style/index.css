@@ -1,0 +1,36 @@
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  font-family: Arial, sans-serif;
+
+  input,
+  button {
+    padding: 5px 20px;
+    border-radius: 10px;
+
+    background: transparent;
+
+    transition: 0.3s ease-in-out;
+
+    &:hover {
+      scale: 1.05;
+    }
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+.result {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.bold {
+  font-weight: bold;
+}
