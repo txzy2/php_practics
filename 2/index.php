@@ -4,21 +4,27 @@ class Gen
 {
     protected $length;
     protected $multiplicity;
-
-    private $password = '';
-
+    protected $password = '';
     protected $regdx = '/^(?=\S{8,25})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/';
-    protected $regdx_eazy = '/^[a-zA-Z0-9]{8,25}$/';
+    protected $regdx_easy = '/^[a-zA-Z0-9]{8,25}$/';
     protected $regdx_medium = '/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,25}$/';
     protected $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_+-=';
 
     public function __construct($params)
     {
-        $this->length = $params['length'] ?? 8;
+        $this->length = $params['length'] ?? null;
         $this->multiplicity = $params['multiplicity'] ?? 'medium';
+
+        if ($this->multiplicity === 'strong' && $this->length < 12) {
+            throw new Exception('Length for strong passwords must be at least 12 characters.');
+        }
+
+        if ($this->length < 8) {
+            throw new Exception('Length must be at least 8 characters.');
+        }
     }
 
-    private function pass()
+    private function generatePassword()
     {
         $this->password = '';
         for ($i = 0; $i < $this->length; $i++) {
@@ -26,41 +32,29 @@ class Gen
         }
     }
 
-    private function gen()
+    private function generateAndValidate()
     {
         $multiplicity = $this->multiplicity === 'easy'
-            ? $this->regdx_eazy
-            : (
-                $this->multiplicity === 'medium'
-                ? $this->regdx_medium
-                : $this->regdx
-            );
+            ? $this->regdx_easy
+            : ($this->multiplicity === 'medium' ? $this->regdx_medium : $this->regdx);
 
         do {
-            $this->pass();
+            $this->generatePassword();
         } while (!preg_match($multiplicity, $this->password));
     }
 
     public function getResult()
     {
-        $this->gen();
+        $this->generateAndValidate();
         return $this->password;
     }
 }
 
-$params = [
-    'length' => 12,
-    'multiplicity' => 'strong'
-];
+$params = ['length' => 12, 'multiplicity' => 'strong'];
 
-if (empty($params['length']) || $params['length'] < 8) {
-    echo 'length is null or less than 8';
-    return;
+try {
+    $gen = new Gen($params);
+    echo $gen->getResult();
+} catch (Exception $e) {
+    echo $e->getMessage();
 }
-
-if ($params['multiplicity'] === 'strong' && $params['length'] < 12) {
-    echo 'lenght must be more them 12';
-}
-
-$gen = new Gen($params);
-echo $gen->getResult();
