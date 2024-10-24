@@ -2,6 +2,11 @@
 
 class Str
 {
+    /**
+     * Summary of detect
+     * @param string $str
+     * @return string
+     */
     private static function detect(string $str)
     {
         if (preg_match("/[А-Яа-я]/", $str)) {
@@ -11,6 +16,11 @@ class Str
         return "this string contains only Latin letters";
     }
 
+    /**
+     * Summary of getRes
+     * @param mixed $str
+     * @return string
+     */
     public static function getRes($str)
     {
         if (is_numeric($str)) {

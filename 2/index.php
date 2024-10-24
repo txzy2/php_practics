@@ -10,6 +10,10 @@ class Gen
     protected $regdx_medium = '/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,25}$/';
     protected $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_+-=';
 
+    /**
+     * @param $params
+     * @throws Exception
+     */
     public function __construct($params)
     {
         $this->length = $params['length'] ?? null;
@@ -24,6 +28,10 @@ class Gen
         }
     }
 
+    /**
+     * Summary of generatePassword
+     * @return void
+     */
     private function generatePassword()
     {
         $this->password = '';
@@ -32,6 +40,10 @@ class Gen
         }
     }
 
+    /**
+     * Summary of generateAndValidate
+     * @return void
+     */
     private function generateAndValidate()
     {
         $multiplicity = $this->multiplicity === 'easy'
@@ -43,6 +55,10 @@ class Gen
         } while (!preg_match($multiplicity, $this->password));
     }
 
+    /**
+     * Summary of getResult
+     * @return string
+     */
     public function getResult()
     {
         $this->generateAndValidate();
