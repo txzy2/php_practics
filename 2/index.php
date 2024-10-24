@@ -50,7 +50,10 @@ class Gen
     }
 }
 
-$params = ['length' => 12, 'multiplicity' => 'strong'];
+$params = [
+    'length' => 12,
+    'multiplicity' => 'strong'
+];
 
 try {
     $gen = new Gen($params);
