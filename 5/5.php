@@ -4,31 +4,31 @@ include 'Vehicle.php';
 
 class Car extends Vehicle
 {
-    public function __construct(float $fuelLevel, int $maxFuelCapacity)
+    public function __construct(float $fuelLevel, int $maxFuelCapacity, string $name)
     {
-        parent::__construct($fuelLevel, $maxFuelCapacity);
+        parent::__construct($fuelLevel, $maxFuelCapacity, $name);
         $this->type = 'car';
     }
 }
 
 class Truck extends Vehicle
 {
-    public function __construct(float $fuelLevel, int $maxFuelCapacity)
+    public function __construct(float $fuelLevel, int $maxFuelCapacity, $name)
     {
-        parent::__construct($fuelLevel, $maxFuelCapacity);
+        parent::__construct($fuelLevel, $maxFuelCapacity, $name);
         $this->type = 'truck';
     }
 }
 
 class GazStation
 {
-    protected const array FUEL_PRICES = [
+    protected const FUEL_PRICES = [
         '92' => 53.67,
         '95' => 58.95,
         '100' => 79.51,
         'diesel' => 66.87,
     ];
-    protected const float FEE = 3;
+    protected const FEE = 3;
     protected array $vehicles = [];
     protected array $terminals = [];
 
@@ -75,12 +75,12 @@ class GazStation
 
 $gaz_station = new GazStation(6);
 
-$car1 = new Car(40, 50);
-$car2 = new Car(20, 45);
-$car3 = new Car(20, 80);
+$car1 = new Car(40, 50, 'Lada');
+$car2 = new Car(20, 45, 'Nissan');
+$car3 = new Car(20, 80, 'Volvo');
 
-$truck = new Truck(5, 250);
-$truck2 = new Truck(60, 200);
+$truck = new Truck(5, 250, 'Man');
+$truck2 = new Truck(60, 200, 'Kamaz');
 
 $gaz_station->addVehicle($car1);
 $gaz_station->addVehicle($car2);
@@ -89,7 +89,7 @@ $gaz_station->addVehicle($car3);
 $gaz_station->addVehicle($truck);
 $gaz_station->addVehicle($truck2);
 
-echo "<-- Prices -->\n";
+echo "<-- Fuel Prices -->\n";
 $index = 1;
 foreach ($gaz_station->getFuelPrice() as $fuelType => $price) {
     echo $index . ") " . $fuelType . ": " . $price . " rub\n";

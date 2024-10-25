@@ -11,17 +11,19 @@ interface VehicleInterface
 
 abstract class Vehicle implements VehicleInterface
 {
+    protected string $name;
     protected float $fuelLevel;
     protected int $maxFuelCapacity;
     protected bool $isRunning = true;
     protected string $type;
 
-    public function __construct(float $fuelLevel, int $maxFuelCapacity)
+    public function __construct(float $fuelLevel, int $maxFuelCapacity, string $name)
     {
         if ($fuelLevel <= 0 or $maxFuelCapacity <= 0) {
             throw new InvalidArgumentException("Params must be positive");
         }
 
+        $this->name = $name;
         $this->fuelLevel = $fuelLevel;
         $this->maxFuelCapacity = $maxFuelCapacity;
     }
@@ -59,7 +61,7 @@ abstract class Vehicle implements VehicleInterface
     {
         if ($this->isRunning) {
             $this->isRunning = false;
-            echo "🚗 Vehicle stopped";
+            echo "🚗 Vehicle $this->name started to refuel";
         } else {
             echo "⚠️ Vehicle is already stopped\n";
         }
@@ -69,7 +71,7 @@ abstract class Vehicle implements VehicleInterface
     {
         if ($this->fuelLevel > 0.5) {
             $this->isRunning = true;
-            echo "✔️ Vehicle leave";
+            echo "✔️ Vehicle $this->name leave";
         } else {
             echo "❌ Cannot start vehicle. Fuel is too low.\n";
         }
