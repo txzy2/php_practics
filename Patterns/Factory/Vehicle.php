@@ -2,55 +2,38 @@
 
 interface VehicleInterface
 {
-    public function start(): void;
+    public function start(): string;
 
-    public function stop(): void;
+    public function stop(): string;
 
     public function refuel(float $amount, string $fuelType, int $terminal, array $fuelPrice, int $fee): void;
 }
 
 abstract class Vehicle implements VehicleInterface
 {
-    protected string $name;
     protected float $fuelLevel;
     protected int $maxFuelCapacity;
     protected bool $isRunning = true;
     protected string $type;
 
-    /**
-     * Summary of __construct
-     * @param float $fuelLevel
-     * @param int $maxFuelCapacity
-     * @param string $name
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(float $fuelLevel, int $maxFuelCapacity, string $name)
+    public function __construct(float $fuelLevel, int $maxFuelCapacity)
     {
         if ($fuelLevel <= 0 or $maxFuelCapacity <= 0) {
             throw new InvalidArgumentException("Params must be positive");
         }
 
-        $this->name = $name;
         $this->fuelLevel = $fuelLevel;
         $this->maxFuelCapacity = $maxFuelCapacity;
     }
 
-    /**
-     * Summary of refuel
-     * @param float $amount
-     * @param string $fuelType
-     * @param int $terminal
-     * @param array $fuelPrice
-     * @param int $fee
-     * @return void
-     */
     public function refuel(float $amount, string $fuelType, int $terminal, array $fuelPrice, int $fee): void
     {
         if (!array_key_exists($fuelType, $fuelPrice)) {
             echo "❌ Invalid fuel type.\n";
         }
 
-        echo $this->stop() . "\nTERMINAL $terminal" . " -> Vehicle type: $this->type -> Fuel level: $this->fuelLevel\n";
+        $stopped = $this->stop();
+        Log::getInstance()->setLog("$stopped \nTERMINAL $terminal" . " -> Vehicle type: $this->type -> Fuel level: $this->fuelLevel\n");
 
         $neededFuel = min($amount, $this->maxFuelCapacity - $this->fuelLevel);
         $this->fuelLevel += $neededFuel;
@@ -69,35 +52,28 @@ abstract class Vehicle implements VehicleInterface
         ];
         $res = json_encode($cheque);
 
-        echo "⛽ Cheque: $res\n";
-        echo $this->start() . " from terminal $terminal\nIncome: $cheque->cost rub\nFuel consumed: $cheque->totalLiters \n\n";
+        Log::getInstance()->setLog("⛽ Cheque: $res");
+        $started = $this->start();
+        Log::getInstance()->setLog( "$started from terminal $terminal\nIncome: $cheque->cost rub\nFuel consumed: $cheque->totalLiters");
     }
 
-    /**
-     * Summary of stop
-     * @return void
-     */
-    public function stop(): void
+    public function stop(): string
     {
         if ($this->isRunning) {
             $this->isRunning = false;
-            echo "🚗 Vehicle $this->name started to refuel";
+            return "🚗 Vehicle stopped";
         } else {
-            echo "⚠️ Vehicle is already stopped\n";
+            return "⚠️ Vehicle is already stopped\n";
         }
     }
 
-    /**
-     * Summary of start
-     * @return void
-     */
-    public function start(): void
+    public function start(): string
     {
         if ($this->fuelLevel > 0.5) {
             $this->isRunning = true;
-            echo "✔️ Vehicle $this->name leave";
+            return "✔️ Vehicle leave";
         } else {
-            echo "❌ Cannot start vehicle. Fuel is too low.\n";
+            return "❌ Cannot start vehicle. Fuel is too low.\n";
         }
     }
 }
