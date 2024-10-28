@@ -1,22 +1,40 @@
 <?php
+date_default_timezone_set('Europe/Moscow');
 
-class Log {
-    private static ?Log $instance  = null;
+class Log
+{
+    private static ?Log $instance = null;
     private $file;
+    private string $filePath;
 
     private function __construct()
     {
-        $this->file = fopen(__DIR__ . '/base.log', 'a+');
+        $this->filePath = __DIR__ . '/logs/' . date('Y-m-d') . '.log';
+        if (!file_exists(__DIR__ . '/logs')) {
+            mkdir(__DIR__ . '/logs', 0777, true);
+        }
+        $this->file = fopen($this->filePath, 'a+');
     }
 
-    public static function getInstance(): Log {
+    /**
+     * Главный метод для получения экземпляра
+     * @return Log
+     */
+    public static function getInstance(): Log
+    {
         if (self::$instance === null) {
             self::$instance = new Log();
         }
         return self::$instance;
     }
 
-    public function setLog(string $log): void
+    /**
+     * Запись в лог
+     * @param string $log
+     * @param string $level
+     * @return void
+     */
+    private function setLog(string $log, string $level = 'INFO'): void
     {
         if (empty($log)) {
             echo "Empty log message! \n";
@@ -24,19 +42,32 @@ class Log {
         }
 
         $date = date("Y-m-d H:i:s");
-        fwrite($this->file, "[$date] $log" . PHP_EOL);
+        $formattedLog = sprintf("[%s] [%s] %s%s", $date, strtoupper($level), $log, PHP_EOL);
+        fwrite($this->file, $formattedLog);
     }
 
-    public function getLog(): void
+    /**
+     * Запись в лог информации
+     * @param string $message
+     * @return void
+     */
+    public function info(string $message): void
     {
-        fseek($this->file, 0);
-        $fileSize = filesize('/base.log');
+        $this->setLog($message, 'INFO');
+    }
 
-        if ($fileSize > 0) {
-            echo fread($this->file, $fileSize);
-        } else {
-            echo "Log file is empty.\n";
-        }
+    /**
+     * Запись в лог ошибки
+     * @param string $message
+     * @return void
+     */
+    public function error(string $message): void
+    {
+        $this->setLog($message, 'ERROR');
+    }
+
+    public function getFileLogs() {
+        return $this->filePath;
     }
 
     public function __destruct()
